@@ -38,6 +38,11 @@
             pkgs.libiconv
           ];
 
+          extraDummyScript = ''
+            cp -a ${./memory.x} $out/memory.x
+            rm -rf $out/src/bin/crane-dummy-*
+          '';
+
           # Additional environment variables can be set directly
           # MY_CUSTOM_VAR = "some value";
         };
