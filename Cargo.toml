@@ -74,3 +74,7 @@ debug-assertions = false
 incremental = false
 lto = 'fat'
 opt-level = 3
+
+# [[test]]
+# name = "dummy"
+# harness = false  # This tells Cargo not to use the standard test framework
