@@ -18,9 +18,18 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         craneLib = crane.lib.${system};
+
+        commonBuildInputs = with pkgs; [
+          openocd-rp2040
+          probe-rs
+          flip-link
+          elf2uf2-rs
+        ];
         my-crate = craneLib.buildPackage {
           src = ./.; #craneLib.cleanCargoSource (craneLib.path ./.);
           strictDeps = true;
+
+          nativeBuildInputs = commonBuildInputs;
 
           buildInputs = [
             # Add additional build inputs here
@@ -47,6 +56,7 @@
         devShells.default = craneLib.devShell {
           # Inherit inputs from checks.
           checks = self.checks.${system};
+          nativeBuildInputs = commonBuildInputs;
 
           # Additional dev-shell environment variables can be set directly
           # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
