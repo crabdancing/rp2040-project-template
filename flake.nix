@@ -30,7 +30,8 @@
           overlays = [ (import rust-overlay) ];
         };
         rust = pkgs.rust-bin.stable.latest.default.override {
-          targets = [ "thumbv6m-none-eabi" ];
+          extensions = [ "rust-analyzer" "rust-src" ];
+          targets = [ "x86_64-unknown-linux-gnu" "thumbv6m-none-eabi" ];
         };
 
         commonBuildInputs = with pkgs; [
