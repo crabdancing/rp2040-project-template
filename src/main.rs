@@ -67,10 +67,11 @@ fn main() -> ! {
     loop {
         info!("on!");
         led_pin.set_high().unwrap();
-        delay.delay_ms(1000);
+        delay.delay_us(200);
         info!("off!");
         led_pin.set_low().unwrap();
-        delay.delay_ms(1000);
+        delay.delay_us(200);
+        info!("uwu");
     }
 }
 
