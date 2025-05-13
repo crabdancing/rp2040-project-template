@@ -62,9 +62,8 @@
           '';
           cargoExtraArgs = "--target thumbv6m-none-eabi --bin rp2040-project-template";
           buildInputs = [
-            pkgs.flip-link
           ];
-          CARGO_TARGET_THUMBV7EM_NONE_EABIHF_RUSTFLAGS = "-C link-arg=--library-path=.";
+          RUSTFLAGS = "-C link-arg=--library-path=.";
         })
         .overrideAttrs (old: {
           patchPhase =
