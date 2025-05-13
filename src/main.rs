@@ -7,7 +7,7 @@
 use bsp::entry;
 use defmt::*;
 use defmt_rtt as _;
-use embedded_hal::digital::v2::OutputPin;
+use embedded_hal::digital::OutputPin;
 use panic_probe as _;
 
 // Provide an alias for our BSP so we can switch targets quickly.
@@ -67,11 +67,10 @@ fn main() -> ! {
     loop {
         info!("on!");
         led_pin.set_high().unwrap();
-        delay.delay_us(200);
+        delay.delay_ms(500);
         info!("off!");
         led_pin.set_low().unwrap();
-        delay.delay_us(200);
-        info!("uwu");
+        delay.delay_ms(500);
     }
 }
 

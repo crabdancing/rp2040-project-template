@@ -60,6 +60,7 @@
             cp -a ${./memory.x} $out/memory.x
             (shopt -s globstar; rm -rf $out/**/src/bin/crane-dummy-*)
           '';
+          cargoExtraArgs = "--target thumbv6m-none-eabi";
           buildInputs =
             [
               # Add additional build inputs here
