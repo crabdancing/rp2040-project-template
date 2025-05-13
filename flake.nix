@@ -56,14 +56,6 @@
           inherit nativeBuildInputs;
           # Breaks on cross compile for RP2040
           doCheck = false;
-          # c = ''
-          #   mkdir -p "$out"
-          #   echo "OUT: $out"
-          #   ls -lah $out
-          #   echo "OUT_DIR: $OUT_DIR"
-          #   cp -a ${./memory.x} "$OUT_DIR/memory.x"
-          #   rm -rf $out/src/bin/crane-dummy-*
-          # '';
           extraDummyScript = ''
             cp -a ${./memory.x} $out/memory.x
             (shopt -s globstar; rm -rf $out/**/src/bin/crane-dummy-*)
