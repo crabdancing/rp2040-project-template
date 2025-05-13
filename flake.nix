@@ -9,7 +9,6 @@
       url = "github:oxalica/rust-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
       };
     };
 
@@ -39,7 +38,7 @@
         targets = ["x86_64-unknown-linux-gnu" "thumbv6m-none-eabi"];
       };
 
-      commonBuildInputs = with pkgs; [
+      nativeBuildInputs = with pkgs; [
         openocd-rp2040
         probe-rs
         flip-link
@@ -47,29 +46,44 @@
       ];
       craneLib = (crane.mkLib pkgs).overrideToolchain rust;
 
-      my-crate = craneLib.buildPackage {
-        src = ./.; #craneLib.cleanCargoSource (craneLib.path ./.);
-        strictDeps = true;
+      my-crate =
+        (craneLib.buildPackage {
+          src = ./.; #craneLib.cleanCargoSource (craneLib.path ./.);
+          strictDeps = true;
+          # strictDeps = false;
+          # cargoExtraArgs = "--features rp-pico/cortex-m-rt --features rp2040-hal/rt";
 
-        nativeBuildInputs = commonBuildInputs;
-        # Breaks on cross compile for RP2040
-        doCheck = false;
-        buildInputs =
-          [
-            # Add additional build inputs here
-          ]
-          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-            # Additional darwin specific inputs can be set here
-            pkgs.libiconv
-          ];
-
-        extraDummyScript = ''
-          cp -a ${./memory.x} $out/memory.x
-          rm -rf $out/src/bin/crane-dummy-*
-        '';
-        # Additional environment variables can be set directly
-        # MY_CUSTOM_VAR = "some value";
-      };
+          inherit nativeBuildInputs;
+          # Breaks on cross compile for RP2040
+          doCheck = false;
+          # c = ''
+          #   mkdir -p "$out"
+          #   echo "OUT: $out"
+          #   ls -lah $out
+          #   echo "OUT_DIR: $OUT_DIR"
+          #   cp -a ${./memory.x} "$OUT_DIR/memory.x"
+          #   rm -rf $out/src/bin/crane-dummy-*
+          # '';
+          extraDummyScript = ''
+            cp -a ${./memory.x} $out/memory.x
+            (shopt -s globstar; rm -rf $out/**/src/bin/crane-dummy-*)
+          '';
+          buildInputs =
+            [
+              # Add additional build inputs here
+            ]
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              # Additional darwin specific inputs can be set here
+              pkgs.libiconv
+            ];
+        })
+        .overrideAttrs (old: {
+          patchPhase =
+            (old.patchPhase
+              or "")
+            + ''
+            '';
+        });
     in {
       checks = {
         inherit my-crate;
@@ -84,7 +98,7 @@
       devShells.default = craneLib.devShell {
         # Inherit inputs from checks.
         checks = self.checks.${system};
-        nativeBuildInputs = commonBuildInputs;
+        inherit nativeBuildInputs;
 
         # Additional dev-shell environment variables can be set directly
         # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
