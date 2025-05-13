@@ -60,15 +60,11 @@
             cp -a ${./memory.x} $out/memory.x
             (shopt -s globstar; rm -rf $out/**/src/bin/crane-dummy-*)
           '';
-          cargoExtraArgs = "--target thumbv6m-none-eabi";
-          buildInputs =
-            [
-              # Add additional build inputs here
-            ]
-            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-              # Additional darwin specific inputs can be set here
-              pkgs.libiconv
-            ];
+          cargoExtraArgs = "--target thumbv6m-none-eabi --bin rp2040-project-template";
+          buildInputs = [
+            pkgs.flip-link
+          ];
+          CARGO_TARGET_THUMBV7EM_NONE_EABIHF_RUSTFLAGS = "-C link-arg=--library-path=.";
         })
         .overrideAttrs (old: {
           patchPhase =
