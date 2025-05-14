@@ -46,41 +46,25 @@
       ];
       craneLib = (crane.mkLib pkgs).overrideToolchain rust;
 
-      my-crate =
-        (craneLib.buildPackage {
-          src = ./.; #craneLib.cleanCargoSource (craneLib.path ./.);
-          strictDeps = true;
-          # strictDeps = false;
-          # cargoExtraArgs = "--features rp-pico/cortex-m-rt --features rp2040-hal/rt";
+      rp2040-project-template = craneLib.buildPackage {
+        src = ./.; #craneLib.cleanCargoSource (craneLib.path ./.);
+        strictDeps = true;
 
-          inherit nativeBuildInputs;
-          # Breaks on cross compile for RP2040
-          doCheck = false;
-          extraDummyScript = ''
-            cp -a ${./memory.x} $out/memory.x
-            (shopt -s globstar; rm -rf $out/**/src/bin/crane-dummy-*)
-          '';
-          cargoExtraArgs = "--target thumbv6m-none-eabi --bin rp2040-project-template";
-          buildInputs = [
-          ];
-          RUSTFLAGS = "-C link-arg=--library-path=.";
-        })
-        .overrideAttrs (old: {
-          patchPhase =
-            (old.patchPhase
-              or "")
-            + ''
-            '';
-        });
+        inherit nativeBuildInputs;
+        doCheck = false;
+        buildInputs = [
+        ];
+        RUSTFLAGS = "-C link-arg=--library-path=.";
+      };
     in {
       checks = {
-        inherit my-crate;
+        inherit rp2040-project-template;
       };
 
-      packages.default = my-crate;
+      packages.default = rp2040-project-template;
 
       apps.default = flake-utils.lib.mkApp {
-        drv = my-crate;
+        drv = rp2040-project-template;
       };
 
       devShells.default = craneLib.devShell {
