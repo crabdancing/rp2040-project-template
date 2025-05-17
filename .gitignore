@@ -3,6 +3,7 @@
 .gdb_history
 target/
 result
+.direnv
 
 # editor files
 .vscode/*
